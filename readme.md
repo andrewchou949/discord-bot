@@ -46,3 +46,13 @@
                 * Define a execute(interaction) function and respond by:
                     * await interaction.reply("Anything you want to reply :D")
             * Both bullet points above should be in the same .js files!
+        **Individual command files are stored in './commands/utility' folder**
+    * Making the **Command Handling**:
+        * This command handling part is for creating a single command file with a giant if/else if chain to handle each command!!
+        * In index.js, define:
+            * fs module: to be used as a scanner to read command directory
+            * path module: to find the path to access files!
+            * .commands object: to be used as a way to refer to commands in other files
+        * Construct a dynamically retrieval of command files in index.js (check in index.js file)
+        * Add a event listener in index.js (receiving command interactions)
+
