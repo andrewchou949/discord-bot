@@ -7,24 +7,42 @@
 ### The project folder is created with "npm init -y" (for prefilled command for initialization)
 
 ### The bot is primarily using discord.js to create
-    ### To install discord.js:
-        ### * npm install discord.js
+    * To install discord.js:
+        * npm install discord.js
 
 ### To keep codes tidy and clean, ESLint is being used!
-    ### To install eslint:
-        ### * npm install --save-dev eslint
-    ### All the rules are being added to .eslintrc.json file!
+    * To install eslint:
+        * npm install --save-dev eslint
+    * All the rules are being added to .eslintrc.json file!
 
 ### Setting up bot application
-    ### Start by create a discord application on discord dev portal!
-    ### Then create a token of the bot (save this token for later use)
-    ### Generating Invite URL of the bot:
-        ### * Got to OAuth2 (Sidebar)
-            ### * Under OAuth2 URL Generator, pick "bot" and "applications.commands" (then the setting would pop up, pick base on needs)
-        ### * Copy the URL link and put it in browser to connect to discord account
-            ### * Then pick the server to add the bot to
-                ### * Once authorized, the bot should be in the server directly
+    * Start by create a discord application on discord dev portal!
+    * Then create a token of the bot (save this token for later use)
+    * Generating Invite URL of the bot:
+        * Got to OAuth2 (Sidebar)
+            * Under OAuth2 URL Generator, pick "bot" and "applications.commands" (then the setting would pop up, pick base on needs)
+        * Copy the URL link and put it in browser to connect to discord account
+            * Then pick the server to add the bot to
+                * Once authorized, the bot should be in the server directly
 
 ### From this part is about creating the bot and configuring the bots
-    ### For the token, make sure to put them in .env files instead and .env should be added to .gitignore to prevent pushing to public
-    ### Creating the main code file (index.js)
+    * For the token, make sure to put them in .env files instead and .env should be added to .gitignore to prevent pushing to public
+    * Creating the main code file (index.js)
+    * Once index.js is created, perform "node index.js" in terminal
+        * This should say "Ready! Logged in as {Bot name}" in terminal
+
+### Creating Slash Commands
+    **Slash Command is a way for user to interact with bot directly in client application by typing in "\[Command]"**
+    * To make slash commands work, 3 pieces of codes are needed!
+        1. Individual Command Files: to define each commaind definition and functionalities
+        2. Command Handler: read the files and execute commands
+        3. Command Deployment Scrip: register slash commands with discord so they appear in the interface
+    * Making the **individual command files**:
+        * For this part, a "SlashCommandBuilder" is used to construct the command definitions
+            * Each command would at minimum has:
+                * Name: .setName('Name')
+                * Description: .setDescription('String defining description')
+            * Each command would need a function to run too (when command is used) --> to respond to the interaction!
+                * Define a execute(interaction) function and respond by:
+                    * await interaction.reply("Anything you want to reply :D")
+            * Both bullet points above should be in the same .js files!
