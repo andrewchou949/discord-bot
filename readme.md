@@ -55,5 +55,10 @@
             * .commands object: to be used as a way to refer to commands in other files
         * Construct a dynamically retrieval of command files in index.js (check in index.js file)
         * Add a event listener in index.js (receiving command interactions)
-
+    * Making the "Command Deployment Script" (Registering the commands):
+        * Typically command registration consists of two ways:
+            1. In one specific guild (server)
+            2. In every guild (server) the bot is in!
+        * Doing one guild command registration first (just to test out!):
+            * Create a deploy-command.js 
 
