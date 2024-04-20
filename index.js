@@ -3,7 +3,7 @@ const fs = require('node:fs'); // --> to be used as Node's native file system mo
 const path = require('node:path'); // -->Path utility --> construct path to access files and directories. (This will adjust the joiner automatically based on OS you're on :D)
 
 // Require the necessary discord.js classes
-const { Client, Events, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 
 // Load env variable from .env
 require('dotenv').config();
@@ -44,17 +44,12 @@ client.once(Events.ClientReady, readyClient => {
 });
 
 // Event Listener (For each command) --> For Client#event:interactionCreate event
-client.on(Events.InteractionCreate, interaction => {
-    // Only Listen to when it's actually interaction for command!
-    if (!interaction.isChatInputCommand()) return; // --> exiting if not command type response
-    console.log(interaction);
-});
-
 // Executing Commands --> Use the #event:interactionCreate to execute the requested commands
 client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isChatInputCommand()) return;
-
-    const command = interaction.client.commands.get(interaction.commandName);
+    // Only Listen to when it's actually interaction for command!
+    if (!interaction.isChatInputCommand()) return; // --> exiting if not command type response
+    
+    const command = client.commands.get(interaction.commandName);
 
     if (!command) {
         console.error(`No command matchin ${interaction.commandName} was found.`);

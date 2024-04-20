@@ -61,4 +61,5 @@
             2. In every guild (server) the bot is in!
         * Doing one guild command registration first (just to test out!):
             * Create a deploy-command.js 
+            * Perform "node deploy-command.js" in terminal
 
