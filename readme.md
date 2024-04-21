@@ -62,4 +62,4 @@
         * Doing one guild command registration first (just to test out!):
             * Create a deploy-command.js 
             * Perform "node deploy-command.js" in terminal
-
+    *** NOTE: once there's changes on index.js, do CMD + Z to exit first, then "node index.js" again to take effect!

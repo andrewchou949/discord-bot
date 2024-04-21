@@ -19,7 +19,10 @@ client.commands = new Collection(); // --> This way, we can refer to commands in
 
 // Dynamically retrive commands
 const foldersPath = path.join(__dirname, 'commands'); // --> construct path to 'commands' directory
-const commandFolders = fs.readdirSync(foldersPath); // --> read path to directory and return an array of all folder names in it! (['utility'])
+const commandFolders = fs.readdirSync(foldersPath).filter(folder => {
+    const folderPath = path.join(foldersPath, folder);
+    return fs.statSync(folderPath).isDirectory();
+}); // --> read path to directory and return an array of all folder names in it! (['utility'])
 
 for (const folder of commandFolders) {
     const commandsPath = path.join(foldersPath, folder);
