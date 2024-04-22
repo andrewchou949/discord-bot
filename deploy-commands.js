@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const commands = [];
-// Grab all the command folders from the commands directory you created earlier
+// Grab all the command folders from the commands directory
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath).filter(folder => {
     const folderPath = path.join(foldersPath, folder);
@@ -14,7 +14,7 @@ const commandFolders = fs.readdirSync(foldersPath).filter(folder => {
 });
 
 for (const folder of commandFolders) {
-	// Grab all the command files from the commands directory you created earlier
+	// Grab all the command files from the commands directory
 	const commandsPath = path.join(foldersPath, folder);
 	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 	// Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
@@ -33,20 +33,25 @@ for (const folder of commandFolders) {
 const rest = new REST().setToken(process.env.DISCORD_BOT_TOKEN);
 
 
-// and deploy your commands!
+// and deploy commands!
 (async () => {
 	try {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
-		// The put method is used to fully refresh all commands in the guild with the current set
-		const data = await rest.put(
-			Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
-			{ body: commands },
-		);
+        // // This is for deploying the bot for the server scope only! (Only work on this server or guild)
+		// const data = await rest.put(
+		// 	Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
+		// 	{ body: commands },
+		// );
+
+        // This is for global deployment or commands
+        const data = await rest.put(
+            Routes.applicationCommands(process.env.CLIENT_ID),
+            { body: commands },
+        )
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {
-		// And of course, make sure you catch and log any errors!
 		console.error(error);
 	}
 })();
