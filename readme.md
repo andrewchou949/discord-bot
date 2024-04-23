@@ -2,6 +2,8 @@
 
 ## This project is to create a simple discord bot with javascript
 
+**Bot invite Link: https://discord.com/oauth2/authorize?client_id=1230287001513885712&permissions=8&scope=bot+applications.commands**
+
 **Below list all the steps being followed to create the entire project!**
 
 ### The project folder is created with "npm init -y" (for prefilled command for initialization)
@@ -64,5 +66,11 @@
             * Perform "node deploy-command.js" in terminal
     *** NOTE: once there's changes on index.js, do CMD + Z to exit first, then "node index.js" again to take effect!
 
-    * Event Handling for Slash Commands
-        
+    * Event Handling for the bots:
+        * At this point, there are:
+            1. ClientReady Event: when client is ready to use --> emit once
+            2. InteractionCreate Event: when interaction is received --> emit once
+        * Move both event to a file in "Event" folder
+            * ready.js
+            * interactionCreate.js respectively
+        * Then in index.js add a way to find the path to events folder and listen to the event files!
