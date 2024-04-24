@@ -16,7 +16,6 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 // defining a command object!
 client.commands = new Collection(); // --> This way, we can refer to commands in other files too!
-<<<<<<< HEAD
 client.cooldowns = new Collection();
 
 // Dynamically retrive commands
@@ -25,12 +24,6 @@ const commandFolders = fs.readdirSync(foldersPath).filter(folder => {
     const folderPath = path.join(foldersPath, folder);
     return fs.statSync(folderPath).isDirectory();
 }); // --> read path to directory and return an array of all folder names in it! (['utility'])
-=======
-
-// Dynamically retrive commands
-const foldersPath = path.join(__dirname, 'commands'); // --> construct path to 'commands' directory
-const commandFolders = fs.readdirSync(foldersPath); // --> read path to directory and return an array of all folder names in it! (['utility'])
->>>>>>> b52672b (Added some info on command path retrieval and dynamically reading all command files)
 
 for (const folder of commandFolders) {
     const commandsPath = path.join(foldersPath, folder);
@@ -47,7 +40,6 @@ for (const folder of commandFolders) {
     }
 }
 
-<<<<<<< HEAD
 // Moved to events/ready.js
 // // When the client is ready, run this code (only once).
 // // ClientReady event listener
@@ -95,14 +87,6 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
-=======
-// When the client is ready, run this code (only once).
-// The distinction between `client: Client<boolean>` and `readyClient: Client<true>` is important for TypeScript developers.
-// It makes some properties non-nullable.
-client.once(Events.ClientReady, readyClient => {
-	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
-});
->>>>>>> b52672b (Added some info on command path retrieval and dynamically reading all command files)
 
 // Event Listener (For each command) --> For Client#event:interactionCreate event
 client.on(Events.InteractionCreate, interaction => {

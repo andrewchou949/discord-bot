@@ -49,11 +49,7 @@
                     * await interaction.reply("Anything you want to reply :D")
             * Both bullet points above should be in the same .js files!
         **Individual command files are stored in './commands/utility' folder**
-<<<<<<< HEAD
     * Making the "Command Handling":
-=======
-    * Making the **Command Handling**:
->>>>>>> b52672b (Added some info on command path retrieval and dynamically reading all command files)
         * This command handling part is for creating a single command file with a giant if/else if chain to handle each command!!
         * In index.js, define:
             * fs module: to be used as a scanner to read command directory
@@ -61,7 +57,6 @@
             * .commands object: to be used as a way to refer to commands in other files
         * Construct a dynamically retrieval of command files in index.js (check in index.js file)
         * Add a event listener in index.js (receiving command interactions)
-<<<<<<< HEAD
     * Making the "Command Deployment Script" (Registering the commands):
         * Typically command registration consists of two ways:
             1. In one specific guild (server)
@@ -84,6 +79,3 @@
     * Adding a cooldown time for each slash commands: 
         * Simply add the cooldown factor to the slash command files!
         * Create a cooldown object to the index.js too
-=======
-
->>>>>>> b52672b (Added some info on command path retrieval and dynamically reading all command files)
