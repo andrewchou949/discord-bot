@@ -77,3 +77,5 @@
         * Then in index.js add a way to find the path to events folder and listen to the event files!
 
     * Adding a cooldown time for each slash commands: 
+        * Simply add the cooldown factor to the slash command files!
+        * Create a cooldown object to the index.js too
