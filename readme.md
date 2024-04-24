@@ -4,6 +4,8 @@
 
 **Bot invite Link: https://discord.com/oauth2/authorize?client_id=1230287001513885712&permissions=8&scope=bot+applications.commands**
 
+NOTE: the bot isn't being hosted anywhere, for the bot to work, download the repository and perform "node index.js" to make the bot active!
+
 **Below list all the steps being followed to create the entire project!**
 
 ### The project folder is created with "npm init -y" (for prefilled command for initialization)
@@ -78,4 +80,4 @@
 
     * Adding a cooldown time for each slash commands: 
         * Simply add the cooldown factor to the slash command files!
-        * Create a cooldown object to the index.js too
+        * Create a cooldown object to the interactionCreate too!
