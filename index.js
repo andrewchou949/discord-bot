@@ -16,6 +16,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 // defining a command object!
 client.commands = new Collection(); // --> This way, we can refer to commands in other files too!
+client.cooldowns = new Collection();
 
 // Dynamically retrive commands
 const foldersPath = path.join(__dirname, 'commands'); // --> construct path to 'commands' directory

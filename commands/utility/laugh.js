@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 
 // module.exports here is used to export data from this file in other files with require()
 module.exports = {
+    cooldown: 5,
     // Definition of slash command!
     data: new SlashCommandBuilder()
         .setName('hehe')

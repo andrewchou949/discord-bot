@@ -65,6 +65,7 @@
             * Create a deploy-command.js 
             * Perform "node deploy-command.js" in terminal
     *** NOTE: once there's changes on index.js, do CMD + Z to exit first, then "node index.js" again to take effect!
+    *** NOTE: for slash command that need to get info from external API, "axios" package can be used, and just do axios.get('API website')
 
     * Event Handling for the bots:
         * At this point, there are:
@@ -74,3 +75,5 @@
             * ready.js
             * interactionCreate.js respectively
         * Then in index.js add a way to find the path to events folder and listen to the event files!
+
+    * Adding a cooldown time for each slash commands: 
