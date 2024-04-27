@@ -81,3 +81,11 @@ NOTE: the bot isn't being hosted anywhere, for the bot to work, download the rep
     * Adding a cooldown time for each slash commands: 
         * Simply add the cooldown factor to the slash command files!
         * Create a cooldown object to the interactionCreate too!
+
+    * The reload.js is for reloading any slash command when changes occurred without having to stop the bot and run again
+
+    ** NOTE: to add more option for reply of slash command, make changes on each slash command file:
+        * Edit response: send respond once and edit after the wait time
+        * Deferred response: wait for a set time and respond.
+        * Follow-ups response: send one response and then another one (not shown as edited!) --> two difference response at one command!
+        * Fetching or deleting response
