@@ -89,3 +89,8 @@ NOTE: the bot isn't being hosted anywhere, for the bot to work, download the rep
         * Deferred response: wait for a set time and respond.
         * Follow-ups response: send one response and then another one (not shown as edited!) --> two difference response at one command!
         * Fetching or deleting response
+    All of these are in hello.js for demonstration
+
+    * Doing command option for slash command (in ban.js)
+        * Giving some optional and required option for user!
+    * Command Choices:
