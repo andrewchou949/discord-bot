@@ -93,4 +93,5 @@ NOTE: the bot isn't being hosted anywhere, for the bot to work, download the rep
 
     * Doing command option for slash command (in ban.js)
         * Giving some optional and required option for user!
-    * Command Choices:
+    * Command Choices (in random.js)
+    
