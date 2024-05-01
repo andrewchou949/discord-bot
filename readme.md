@@ -94,4 +94,6 @@ NOTE: the bot isn't being hosted anywhere, for the bot to work, download the rep
     * Doing command option for slash command (in ban.js)
         * Giving some optional and required option for user!
     * Command Choices (in random.js)
+
+    * Added Genshin.js file for data retrieval on genshin game info!
     
