@@ -96,4 +96,4 @@ NOTE: the bot isn't being hosted anywhere, for the bot to work, download the rep
     * Command Choices (in random.js)
 
     * Added Genshin.js file for data retrieval on genshin game info!
-    
+        * Used Axiom to do api retrieval!
