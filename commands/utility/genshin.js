@@ -1,9 +1,58 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+// EmbedBuilder is for the each data showing grid
+// ActionRowBuilder, ButtonBuilder, ButtonStyle is for choice selection of materials
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const axios = require('axios'); // For api requesting
 
 // Cap first letter and remove -
 function capitalizeFirstLetter(string) {
     return string.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+}
+
+// Material needs further choice selection!
+// "boss-material","character-ascension",
+// "character-experience","common-ascension",
+// "cooking-ingredients","local-specialties","talent-book",
+//"talent-boss","weapon-ascension",""]
+function createMaterialButtons() {
+    return new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('boss-material')
+                .setLabel('Boss Materials')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('character-ascension')
+                .setLabel('Character Ascension')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('character-experience')
+                .setLabel('Character Experience')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('common-ascension')
+                .setLabel('Common Ascension')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('cooking-ingredients')
+                .setLabel('Cooking Ingredients')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('local-specialties')
+                .setLabel('Local Specialties')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('talent-book')
+                .setLabel('Talent Book')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('weapon-ascension')
+                .setLabel('Weapon Ascension')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('weapon-experience')
+                .setLabel('Weapon Experience')
+                .setStyle(ButtonStyle.Primary),
+        );
 }
 
 module.exports = {
@@ -60,6 +109,7 @@ module.exports = {
                     content = "**List of Supported Elements:**\n" + response.data.map(elements => `• ${capitalizeFirstLetter(elements)}`).join('\n');
                     break;
                 // need further breakdown!
+                // After material, it has mutliple categories.
                 case 'materials':
                     content = "**List of Materials:**\n" + response.data.map(material => `• ${capitalizeFirstLetter(material)}`).join('\n');
                     break;
