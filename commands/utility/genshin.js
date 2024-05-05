@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, MessageEmbed } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
 
 // Cap first letter and remove -
@@ -62,6 +62,12 @@ module.exports = {
                     content = "No data available for this category.";
                     break;
             }
+            const embed = new EmbedBuilder()
+                .setColor('#0099ff')
+                .setTitle(`List of ${capitalizeFirstLetter(category)}`)
+                .setDescription(content);
+
+            await interaction.reply({ embeds: [embed] });
         } catch (error) {
             console.error('Error fetching data:', error);
             await interaction.reply('Failed to fetch data from the API.');
