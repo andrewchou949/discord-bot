@@ -30,8 +30,38 @@ module.exports = {
 
         try {
             const response = await axios.get(apiUrl);
-            const artifactList = response.data.map(artifact => `• ${capitalizeFirstLetter(artifact)}`).join('\n'); // Formatting each item with a bullet
-            await interaction.reply(`**Info for ${category}:**\n${artifactList}`);
+            let content = "";
+            const items = response.data;
+
+            switch (category) {
+                case 'artifacts':
+                    content = items.map(artifact => `• ${capitalizeFirstLetter(artifact.name)}`).join('\n');
+                    break;
+                case 'bosses':
+                    content = items.map(boss => `• ${capitalizeFirstLetter(boss.name)}, Level: ${boss.level}`).join('\n');
+                    break;
+                case 'domains':
+                    content = items.map(domain => `• ${capitalizeFirstLetter(domain.name)}, Type: ${domain.type}`).join('\n');
+                    break;
+                case 'characters':
+                    content = items.map(char => `• ${capitalizeFirstLetter(char.name)}, Rarity: ${char.rarity}`).join('\n');
+                    break;
+                case 'consumables':
+                    content = items.map(consumable => `• ${capitalizeFirstLetter(consumable.name)}, Effect: ${consumable.effect}`).join('\n');
+                    break;
+                case 'elements':
+                    content = items.map(element => `• ${capitalizeFirstLetter(element)}`).join('\n');
+                    break;
+                case 'materials':
+                    content = items.map(material => `• ${capitalizeFirstLetter(material.name)}, Use: ${material.use}`).join('\n');
+                    break;
+                case 'weapons':
+                    content = items.map(weapon => `• ${capitalizeFirstLetter(weapon.name)}, Type: ${weapon.type}`).join('\n');
+                    break;
+                default:
+                    content = "No data available for this category.";
+                    break;
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
             await interaction.reply('Failed to fetch data from the API.');
