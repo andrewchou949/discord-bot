@@ -3,6 +3,7 @@ const axios = require('axios');
 
 // Cap first letter and remove -
 function capitalizeFirstLetter(string) {
+    if (!string) return ""; 
     return string.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
 }
 
@@ -30,6 +31,7 @@ module.exports = {
 
         try {
             const response = await axios.get(apiUrl);
+            console.log(response.data);
             let content = "";
             const items = response.data;
 
