@@ -37,28 +37,28 @@ module.exports = {
 
             switch (category) {
                 case 'artifacts':
-                    content = items.map(artifact => `• ${capitalizeFirstLetter(artifact.name)}`).join('\n');
+                    content = response.data.map(artifact => `• ${capitalizeFirstLetter(artifact)}`).join('\n');
                     break;
                 case 'bosses':
                     content = items.map(boss => `• ${capitalizeFirstLetter(boss.name)}, Level: ${boss.level}`).join('\n');
                     break;
                 case 'domains':
-                    content = items.map(domain => `• ${capitalizeFirstLetter(domain.name)}, Type: ${domain.type}`).join('\n');
+                    content = response.data.map(domains => `• ${capitalizeFirstLetter(domains)}`).join('\n');
                     break;
                 case 'characters':
-                    content = items.map(char => `• ${capitalizeFirstLetter(char.name)}, Rarity: ${char.rarity}`).join('\n');
+                    content = response.data.map(char => `• ${capitalizeFirstLetter(char.name)}`).join('\n');
                     break;
                 case 'consumables':
                     content = items.map(consumable => `• ${capitalizeFirstLetter(consumable.name)}, Effect: ${consumable.effect}`).join('\n');
                     break;
                 case 'elements':
-                    content = items.map(element => `• ${capitalizeFirstLetter(element)}`).join('\n');
+                    content = response.data.map(elements => `• ${capitalizeFirstLetter(elements)}`).join('\n');
                     break;
                 case 'materials':
                     content = items.map(material => `• ${capitalizeFirstLetter(material.name)}, Use: ${material.use}`).join('\n');
                     break;
                 case 'weapons':
-                    content = items.map(weapon => `• ${capitalizeFirstLetter(weapon.name)}, Type: ${weapon.type}`).join('\n');
+                    content = response.data.map(weapons => `• ${capitalizeFirstLetter(weapons)}`).join('\n');
                     break;
                 default:
                     content = "No data available for this category.";
