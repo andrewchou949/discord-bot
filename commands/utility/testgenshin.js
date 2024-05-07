@@ -82,7 +82,7 @@ module.exports = {
 
         try {
             const response = await axios.get(apiUrl);
-            console.log(response.data);
+            //console.log(response.data);
             let content = "";
             const items = response.data;
             
@@ -101,10 +101,11 @@ module.exports = {
                         // Item
                         break;
                     case 'character-experience':
-                        // Item
-                        for (const key in items) {
-                            const item = items[key];
-                            content += `**${item.name}**\nExperience: ${item.experience} XP\nRarity: ${'★'.repeat(item.rarity)} (${item.rarity})\n\n`;
+                        for (const item of items.items) {
+                            // Ensure that all properties exist and are correctly referenced
+                            if (item && item.name && typeof item.experience === 'number' && typeof item.rarity === 'number') {
+                                content += `**${item.name}**\nExperience: ${item.experience} XP\nRarity: ${'★'.repeat(item.rarity)} (${item.rarity})\n\n`;
+                            }
                         }
                         break;
                     case 'common-ascension':
@@ -114,7 +115,21 @@ module.exports = {
                         // Item
                         break;
                     case 'local-specialties':
-                    // Item
+                        // Item
+                        // the key is regions
+                        // value is array of dictionary
+                            // dictionary: name
+                            // characters
+                        for (const region in items) {
+                            if (items.hasOwnProperty(region)) {
+                                content += `**${region.charAt(0).toUpperCase() + region.slice(1)} Specialties:**\n`; // Capitalize the region name
+                                for (const specialty of items[region]) {
+                                    const characters = specialty.characters.join(', ');
+                                    content += `• **${specialty.name}**: Used by ${characters}\n`;
+                                }
+                                content += '\n'; // Add a newline for spacing between regions
+                            }
+                        }                    
                         break;
                     case 'talent-book':
                         // Item
