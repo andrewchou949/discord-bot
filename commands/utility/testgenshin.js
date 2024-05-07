@@ -77,7 +77,7 @@ module.exports = {
             // subcommand is the small subcommand in material
             apiUrl += `${group}/${subcommand}`; // Add the choices to url
         } else {
-            apiUrl += `${group}`; // Normal append
+            apiUrl += `${subcommand}`; // Normal append
         }
 
         try {
@@ -85,36 +85,82 @@ module.exports = {
             console.log(response.data);
             let content = "";
             const items = response.data;
-
-            switch (subcommand) {
-                case 'artifacts':
-                    content = items.map(artifact => `• ${capitalizeFirstLetter(artifact)}`).join('\n');
-                    break;
-                case 'bosses':
-                    content = items.map(boss => `• ${capitalizeFirstLetter(boss.name)}, Level: ${boss.level}`).join('\n');
-                    break;
-                case 'domains':
-                    content = items.map(domain => `• ${capitalizeFirstLetter(domain)}`).join('\n');
-                    break;
-                case 'characters':
-                    content = items.map(char => `• ${capitalizeFirstLetter(char.name)}`).join('\n');
-                    break;
-                case 'consumables':
-                    content = items.map(consumable => `• ${capitalizeFirstLetter(consumable.name)}, Effect: ${consumable.effect}`).join('\n');
-                    break;
-                case 'elements':
-                    content = items.map(element => `• ${capitalizeFirstLetter(element)}`).join('\n');
-                    break;
-                case 'materials':
-                    content = items.map(material => `• ${capitalizeFirstLetter(material.name)}, Use: ${material.use}`).join('\n');
-                    break;
-                case 'weapons':
-                    content = items.map(weapon => `• ${capitalizeFirstLetter(weapon)}`).join('\n');
-                    break;
-                default:
-                    content = "No data available for this category.";
-                    break;
+            
+            if (group === 'materials') {
+                switch (subcommand) {
+                    // Have name, source and array of cahracter
+                    case 'boss-material':
+                        // Item
+                        for (const key in items) {
+                            const item = items[key];
+                            const characters = item.characters.join(', ');
+                            content += `**${item.name}**\nSource: ${item.source}\nCharacters: ${characters}\n\n`;
+                        }
+                        break;
+                    case 'character-ascension':
+                        // Item
+                        break;
+                    case 'character-experience':
+                        // Item
+                        for (const key in items) {
+                            const item = items[key];
+                            content += `**${item.name}**\nExperience: ${item.experience} XP\nRarity: ${'★'.repeat(item.rarity)} (${item.rarity})\n\n`;
+                        }
+                        break;
+                    case 'common-ascension':
+                        // Item
+                        break;
+                    case 'cooking-ingredients':
+                        // Item
+                        break;
+                    case 'local-specialties':
+                    // Item
+                        break;
+                    case 'talent-book':
+                        // Item
+                        break;
+                    case 'talent-boss':
+                        // Item
+                        break;
+                    case 'weapon-ascension':
+                        // Item
+                        break;
+                    case 'weapon-experience':
+                        // Item
+                        break;
+                    default:
+                        content = "No specific data available for this subcategory.";
+                        break;
+                }
+            } else {
+                switch (subcommand) {
+                    case 'artifacts':
+                        content = items.map(artifact => `• ${capitalizeFirstLetter(artifact)}`).join('\n');
+                        break;
+                    case 'bosses':
+                        content = items.map(boss => `• ${capitalizeFirstLetter(boss.name)}, Level: ${boss.level}`).join('\n');
+                        break;
+                    case 'domains':
+                        content = items.map(domain => `• ${capitalizeFirstLetter(domain)}`).join('\n');
+                        break;
+                    case 'characters':
+                        content = items.map(char => `• ${capitalizeFirstLetter(char.name)}`).join('\n');
+                        break;
+                    case 'consumables':
+                        content = items.map(consumable => `• ${capitalizeFirstLetter(consumable.name)}, Effect: ${consumable.effect}`).join('\n');
+                        break;
+                    case 'elements':
+                        content = items.map(element => `• ${capitalizeFirstLetter(element)}`).join('\n');
+                        break;
+                    case 'weapons':
+                        content = items.map(weapon => `• ${capitalizeFirstLetter(weapon)}`).join('\n');
+                        break;
+                    default:
+                        content = "No data available for this category.";
+                        break;
+                }
             }
+        
             const embed = new EmbedBuilder()
                 .setColor('#0099ff')
                 .setTitle(`List of ${capitalizeFirstLetter(subcommand)}`)
