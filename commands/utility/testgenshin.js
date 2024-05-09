@@ -120,6 +120,9 @@ module.exports = {
         } else {
             apiUrl += `${subcommand}`; // Normal append
         }
+        
+        // Ask discord to wait for longer than default 3 secs
+        await interaction.deferReply();
 
         try {
             const response = await axios.get(apiUrl);
@@ -202,6 +205,19 @@ module.exports = {
                         break;
                     case 'weapon-ascension':
                         // Item
+                        // 
+                        for (const category in items) {
+                            const categoryInfo = items[category];
+                            content += `**${capitalizeFirstLetter(category)}**\n`;
+                            content += `Source: ${capitalizeFirstLetter(categoryInfo.source)}\n`;
+                            content += `Availability: ${categoryInfo.availability.join(", ")}\n`;
+                            const formattedWeapons = categoryInfo.weapons.map(weapon => capitalizeFirstLetter(weapon.replace(/-/g, ' '))).join(", ");
+                            content += `Weapons: ${formattedWeapons}\nItems:\n`;
+                            for (const item of categoryInfo.items) {
+                                content += `• **${item.name}**: Rarity ${'★'.repeat(item.rarity)} (${item.rarity})\n`;
+                            }
+                            content += "\n";
+                        }
                         break;
                     case 'weapon-experience':
                         // Item
@@ -244,11 +260,11 @@ module.exports = {
             //     .setTitle(`List of ${capitalizeFirstLetter(subcommand)}`)
             //     .setDescription(content);
             const embeds = createEmbeds(`List of ${capitalizeFirstLetter(subcommand)}`, content);
-            await interaction.reply({ embeds });
+            await interaction.editReply({ embeds });
             // await interaction.reply({ embeds: [embed] });
         } catch (error) {
             console.error('Error fetching data:', error);
-            await interaction.reply('Failed to fetch data from the API.');
+            await interaction.editReply('Failed to fetch data from the API.');
         }
     },
 };
