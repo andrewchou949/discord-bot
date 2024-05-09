@@ -5,8 +5,13 @@ const EMBED_COLOR = '#0099ff';
 
 // Function to capitalize the first letter of each word and remove hyphens
 function capitalizeFirstLetter(string) {
-    if (!string) return ""; 
-    return string.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+    if (!string) return "";
+    // Split by hyphen first to replace with spaces, then capitalize each word
+    return string
+        .split('-').join(' ')
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
 }
 
 // Function to create multiple embeds from a large content string
@@ -129,7 +134,7 @@ module.exports = {
                         // Item
                         for (const key in items) {
                             const item = items[key];
-                            const formattedCharacters = specialty.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
+                            const formattedCharacters = item.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
                             content += `**${item.name}**\nSource: ${item.source}\nCharacters: ${formattedCharacters}\n\n`;
                         }
                         break;
