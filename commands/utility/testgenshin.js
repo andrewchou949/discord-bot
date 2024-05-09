@@ -187,6 +187,13 @@ module.exports = {
                         break;
                     case 'talent-boss':
                         // Item
+                        // key is boss name that points to more dictionaries
+                            // containing id, name, characters
+                        for (const boss in items) {
+                            const bossInfo = items[boss];
+                            const formattedCharacters = bossInfo.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
+                            content += `**${bossInfo.name}**\nCharacters: ${formattedCharacters}\n\n`;
+                        }
                         break;
                     case 'weapon-ascension':
                         // Item
