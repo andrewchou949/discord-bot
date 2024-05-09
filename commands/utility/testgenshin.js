@@ -1,10 +1,46 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
+const MAX_EMBED_DESCRIPTION_LENGTH = 4096; // Discord's limit for embed descriptions
+const EMBED_COLOR = '#0099ff';
 
 // Function to capitalize the first letter of each word and remove hyphens
 function capitalizeFirstLetter(string) {
     if (!string) return ""; 
     return string.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+}
+
+// Function to create multiple embeds from a large content string
+function createEmbeds(title, content) {
+    let embeds = [];
+    let currentContent = "";
+
+    for (const section of content.split('\n\n')) {
+        if (currentContent.length + section.length + 2 > MAX_EMBED_DESCRIPTION_LENGTH) {
+            embeds.push(new EmbedBuilder()
+                .setColor(EMBED_COLOR)
+                .setDescription(currentContent)
+            );
+            currentContent = "";
+        }
+        currentContent += `${section}\n\n`;
+    }
+
+    if (currentContent.length > 0) {
+        embeds.push(new EmbedBuilder()
+            .setColor(EMBED_COLOR)
+            .setDescription(currentContent)
+        );
+    }
+
+    if (embeds.length === 0) {
+        embeds.push(new EmbedBuilder()
+            .setColor(EMBED_COLOR)
+            .setDescription("No information available.")
+        );
+    }
+
+    embeds[0].setTitle(title);
+    return embeds;
 }
 
 module.exports = {
@@ -93,8 +129,8 @@ module.exports = {
                         // Item
                         for (const key in items) {
                             const item = items[key];
-                            const characters = item.characters.join(', ');
-                            content += `**${item.name}**\nSource: ${item.source}\nCharacters: ${characters}\n\n`;
+                            const formattedCharacters = specialty.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
+                            content += `**${item.name}**\nSource: ${item.source}\nCharacters: ${formattedCharacters}\n\n`;
                         }
                         break;
                     case 'character-ascension':
@@ -122,10 +158,10 @@ module.exports = {
                             // characters
                         for (const region in items) {
                             if (items.hasOwnProperty(region)) {
-                                content += `**${region.charAt(0).toUpperCase() + region.slice(1)} Specialties:**\n`; // Capitalize the region name
+                                content += `**${capitalizeFirstLetter(region)} Specialties:**\n`; // Capitalize the region name
                                 for (const specialty of items[region]) {
-                                    const characters = specialty.characters.join(', ');
-                                    content += `• **${specialty.name}**: Used by ${characters}\n`;
+                                    const formattedCharacters = specialty.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
+                                    content += `• **${specialty.name}**: Used by ${formattedCharacters}\n`;
                                 }
                                 content += '\n'; // Add a newline for spacing between regions
                             }
@@ -133,6 +169,21 @@ module.exports = {
                         break;
                     case 'talent-book':
                         // Item
+                        // the key is name of book
+                        for (const bookType in items) {
+                            const bookInfo = items[bookType]; // Access the specific book type info
+                            content += `**${capitalizeFirstLetter(bookType)}**\n`; // Capitalize first letter of the book type
+                            content += `Source: ${capitalizeFirstLetter(bookInfo.source)}\n`;
+                            content += `Availability: ${bookInfo.availability.join(", ")}\n`; // Join the array of days into a string
+                            // using regex to replace all hypen (/-/) globally (g) with space
+                            const formattedCharacters = bookInfo.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
+                            content += `Characters: ${formattedCharacters}\n`; // Join the array of characters into a string
+                            content += "Items:\n";
+                            for (const item of bookInfo.items) { // Iterate over items related to the book type
+                                content += `• **${item.name}**: Rarity ${'★'.repeat(item.rarity)} (${item.rarity})\n`;
+                            }
+                            content += "\n"; // Add a newline for spacing between book types
+                        }
                         break;
                     case 'talent-boss':
                         // Item
@@ -175,13 +226,14 @@ module.exports = {
                         break;
                 }
             }
-        
-            const embed = new EmbedBuilder()
-                .setColor('#0099ff')
-                .setTitle(`List of ${capitalizeFirstLetter(subcommand)}`)
-                .setDescription(content);
-
-            await interaction.reply({ embeds: [embed] });
+            // This one have 4096 word restriction for discord
+            // const embed = new EmbedBuilder()
+            //     .setColor('#0099ff')
+            //     .setTitle(`List of ${capitalizeFirstLetter(subcommand)}`)
+            //     .setDescription(content);
+            const embeds = createEmbeds(`List of ${capitalizeFirstLetter(subcommand)}`, content);
+            await interaction.reply({ embeds });
+            // await interaction.reply({ embeds: [embed] });
         } catch (error) {
             console.error('Error fetching data:', error);
             await interaction.reply('Failed to fetch data from the API.');
