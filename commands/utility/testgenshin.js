@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
 const MAX_EMBED_DESCRIPTION_LENGTH = 4096; // Discord's limit for embed descriptions
 const EMBED_COLOR = '#0099ff';
-
+// https://discordjs.guide/slash-commands/permissions.html#member-permissions
 // Function to capitalize the first letter of each word and remove hyphens
 function capitalizeFirstLetter(string) {
     if (!string) return "";
@@ -46,6 +46,14 @@ function createEmbeds(title, content) {
 
     embeds[0].setTitle(title);
     return embeds;
+}
+
+// For sending multiple embed, to get away with the 6000 words restriction on discord
+async function sendEmbedsInChunks(interaction, embeds) {
+    await interaction.editReply({ embeds: [embeds.shift()] }); // Send the first embed as a reply
+    for (const embed of embeds) {
+        await interaction.followUp({ embeds: [embed] }); // Send remaining embeds as follow-up messages
+    }
 }
 
 module.exports = {
@@ -260,7 +268,12 @@ module.exports = {
             //     .setTitle(`List of ${capitalizeFirstLetter(subcommand)}`)
             //     .setDescription(content);
             const embeds = createEmbeds(`List of ${capitalizeFirstLetter(subcommand)}`, content);
-            await interaction.editReply({ embeds });
+            if (embeds.length > 1) {
+                await sendEmbedsInChunks(interaction, embeds);
+            }
+            else {
+                await interaction.editReply({ embeds });
+            }
             // await interaction.reply({ embeds: [embed] });
         } catch (error) {
             console.error('Error fetching data:', error);
