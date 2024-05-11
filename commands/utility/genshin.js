@@ -72,9 +72,16 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand.setName('characters')
                 .setDescription('Get information about characters'))
-        .addSubcommand(subcommand =>
-            subcommand.setName('consumables')
-                .setDescription('Get information about consumables'))
+        .addSubcommandGroup(group =>
+            group.setName('consumables')
+                .setDescription('Get information about consumables')
+                .addSubcommand(subcommand =>
+                    subcommand.setName('food')
+                        .setDescription('Get info about Food Type consumables'))
+                .addSubcommand(subcommand =>
+                    subcommand.setName('potions')
+                        .setDescription('Get info about Potions type consumables'))
+                )
         .addSubcommand(subcommand =>
             subcommand.setName('elements')
                 .setDescription('Get information about elements'))
@@ -301,6 +308,50 @@ module.exports = {
                         break;
                     default:
                         content = "No specific data available for this subcategory.";
+                        break;
+                }
+            } else if (group === 'consumables') {
+                switch (subcommand) {
+                    case 'food':
+                        for (const foodKey in items) {
+                            const food = items[foodKey];
+                            content += `**${food.name}**\nType: ${food.type}\nEffect: ${food.effect}\nRarity: ${'★'.repeat(food.rarity)} (${food.rarity})\nDescription: ${food.description}\n`;
+                    
+                            // Check if the food has a recipe
+                            if (food.hasRecipe) {
+                                content += "Recipe:\n";
+                                food.recipe.forEach(ingredient => {
+                                    content += `• **${ingredient.item}**: ${ingredient.quantity}\n`;
+                                });
+                            } else {
+                                content += "No recipe available.\n";
+                            }
+                            // Cannot check as .hasProficiency
+                            // Because no matter what proficiency is always presnet
+                            // Not conditionally present
+                            if (food.proficiency !== undefined) {
+                                content += `Proficiency: ${food.proficiency}\n\n`;
+                            } else {
+                                content += `Proficiency: Unknown\n\n`;
+                            }
+                            
+                        }
+                        break;
+                    case 'potions':
+                        for (const potionKey in items) {
+                            const potion = items[potionKey];
+                            content += `**${capitalizeFirstLetter(potion.name)}**\nEffect: ${potion.effect}\nRarity: ${'★'.repeat(potion.rarity)} (${potion.rarity})\n`;
+                            // Crafting details
+                            content += "Crafting:\n";
+                            potion.crafting.forEach(ingredient => {
+                                content += `• **${ingredient.item}**: ${ingredient.quantity}\n`;
+                            });
+                    
+                            content += `Cost: ${potion.crafting.find(item => item.item === "Mora").quantity} Mora\n\n`;
+                        }
+                        break;
+                    default:
+                        content = "No data available for this category.";
                         break;
                 }
             } else {
