@@ -326,9 +326,6 @@ module.exports = {
                             } else {
                                 content += "No recipe available.\n";
                             }
-                            // Cannot check as .hasProficiency
-                            // Because no matter what proficiency is always presnet
-                            // Not conditionally present
                             if (food.proficiency !== undefined) {
                                 content += `Proficiency: ${food.proficiency}\n\n`;
                             } else {
