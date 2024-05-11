@@ -150,7 +150,17 @@ module.exports = {
                         }
                         break;
                     case 'character-ascension':
-                        // Item
+                        // Process each element type (e.g., Anemo, Cryo, etc.)
+                        for (const elementType in items) {
+                            const elementInfo = items[elementType];
+                            content += `**${capitalizeFirstLetter(elementType)} Ascension Materials:**\n`;
+                            // Process each ascension material stage (e.g., sliver, fragment, chunk, gemstone)
+                            for (const stage in elementInfo) {
+                                const material = elementInfo[stage];
+                                content += `• **${material.name}**\nRarity: ${'★'.repeat(material.rarity)}\nSources: ${material.sources.join(", ")}\n\n`;
+                            }
+                            content += '\n'; 
+                        }
                         break;
                     case 'character-experience':
                         for (const item of items.items) {
@@ -161,13 +171,64 @@ module.exports = {
                         }
                         break;
                     case 'common-ascension':
-                        // Item
+                        // the key is the material type (like slime, hilichurl-masks..., etc.)
+                        for (const materialType in items) {
+                            const materialInfo = items[materialType];
+                            content += `**${capitalizeFirstLetter(materialType.replace(/-/g, ' '))}**\n`;                
+                            // Check and list characters
+                            if (materialInfo.characters && Array.isArray(materialInfo.characters)) {
+                                const formattedCharacters = materialInfo.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
+                                content += `Characters: ${formattedCharacters}\n`;
+                            } else {
+                                content += `Characters: None\n`;
+                            }
+                            // Check and list weapons
+                            if (materialInfo.weapons && Array.isArray(materialInfo.weapons)) {
+                                const formattedWeapons = materialInfo.weapons.map(weapon => capitalizeFirstLetter(weapon.replace(/-/g, ' '))).join(", ");
+                                content += `Weapons: ${formattedWeapons}\n`;
+                            } else {
+                                content += `Weapons: None\n`;
+                            }
+                    
+                            // Items and rarity
+                            content += "Items:\n";
+                            if (materialInfo.items && Array.isArray(materialInfo.items)) {
+                                materialInfo.items.forEach(item => {
+                                    content += `• **${item.name}**: Rarity ${'★'.repeat(item.rarity)}\n`;
+                                });
+                            }
+                    
+                            // Sources
+                            if (materialInfo.sources && Array.isArray(materialInfo.sources)) {
+                                const sourcesList = materialInfo.sources.join(", ");
+                                content += `Sources: ${sourcesList}\n\n`;
+                            } else {
+                                content += `Sources: None\n\n`;
+                            }
+                        }                 
                         break;
                     case 'cooking-ingredients':
                         // Item
+                        for (const ingredientKey in items) {
+                            const ingredient = items[ingredientKey];
+                            content += `**${capitalizeFirstLetter(ingredient.name)}**\n`;
+                            content += `Description: ${ingredient.description}\n`;
+                    
+                            // Check for rarity, if it exists
+                            if (ingredient.rarity) {
+                                content += `Rarity: ${'★'.repeat(ingredient.rarity)} (${ingredient.rarity})\n`;
+                            }
+                    
+                            // Check and list sources
+                            if (ingredient.sources && Array.isArray(ingredient.sources)) {
+                                const sourcesList = ingredient.sources.join(", ");
+                                content += `Sources: ${sourcesList}\n\n`;
+                            } else {
+                                content += `Sources: Not available\n\n`;
+                            }
+                        }
                         break;
                     case 'local-specialties':
-                        // Item
                         // the key is regions
                         // value is array of dictionary
                             // dictionary: name
@@ -184,7 +245,6 @@ module.exports = {
                         }                    
                         break;
                     case 'talent-book':
-                        // Item
                         // the key is name of book
                         for (const bookType in items) {
                             const bookInfo = items[bookType]; // Access the specific book type info
@@ -213,7 +273,8 @@ module.exports = {
                         break;
                     case 'weapon-ascension':
                         // Item
-                        // 
+                        // The key is hte name of each weapon ascension item
+                            // containing sources, weapon, availability, array of items
                         for (const category in items) {
                             const categoryInfo = items[category];
                             content += `**${capitalizeFirstLetter(category)}**\n`;
@@ -268,13 +329,13 @@ module.exports = {
             //     .setTitle(`List of ${capitalizeFirstLetter(subcommand)}`)
             //     .setDescription(content);
             const embeds = createEmbeds(`List of ${capitalizeFirstLetter(subcommand)}`, content);
+            // If embed count is > 1 --> word is > 4096 --> Send in split response directly
             if (embeds.length > 1) {
                 await sendEmbedsInChunks(interaction, embeds);
             }
             else {
                 await interaction.editReply({ embeds });
             }
-            // await interaction.reply({ embeds: [embed] });
         } catch (error) {
             console.error('Error fetching data:', error);
             await interaction.editReply('Failed to fetch data from the API.');
