@@ -189,7 +189,6 @@ module.exports = {
                             } else {
                                 content += `Weapons: None\n`;
                             }
-                    
                             // Items and rarity
                             content += "Items:\n";
                             if (materialInfo.items && Array.isArray(materialInfo.items)) {
@@ -197,7 +196,6 @@ module.exports = {
                                     content += `• **${item.name}**: Rarity ${'★'.repeat(item.rarity)}\n`;
                                 });
                             }
-                    
                             // Sources
                             if (materialInfo.sources && Array.isArray(materialInfo.sources)) {
                                 const sourcesList = materialInfo.sources.join(", ");
@@ -212,13 +210,11 @@ module.exports = {
                         for (const ingredientKey in items) {
                             const ingredient = items[ingredientKey];
                             content += `**${capitalizeFirstLetter(ingredient.name)}**\n`;
-                            content += `Description: ${ingredient.description}\n`;
-                    
+                            content += `Description: ${ingredient.description}\n`;      
                             // Check for rarity, if it exists
                             if (ingredient.rarity) {
                                 content += `Rarity: ${'★'.repeat(ingredient.rarity)} (${ingredient.rarity})\n`;
                             }
-                    
                             // Check and list sources
                             if (ingredient.sources && Array.isArray(ingredient.sources)) {
                                 const sourcesList = ingredient.sources.join(", ");
@@ -290,6 +286,18 @@ module.exports = {
                         break;
                     case 'weapon-experience':
                         // Item
+                        for (const item of items.items) {
+                            content += `**${capitalizeFirstLetter(item.name)}**\n`;
+                            content += `Experience: ${item.experience} XP\n`;
+                            content += `Rarity: ${'★'.repeat(item.rarity)} (${item.rarity})\n`;
+                            
+                            if (item.source && Array.isArray(item.source)) {
+                                const sourcesList = item.source.join(", ");
+                                content += `Source: ${sourcesList}\n\n`;
+                            } else {
+                                content += `Source: Not available\n\n`;
+                            }
+                        }
                         break;
                     default:
                         content = "No specific data available for this subcategory.";
