@@ -38,17 +38,17 @@ const rest = new REST().setToken(process.env.DISCORD_BOT_TOKEN);
 	try {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
-        // This is for deploying the bot for the server scope only! (Only work on this server or guild)
-		const data = await rest.put(
-			Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
-			{ body: commands },
-		);
+        // // This is for deploying the bot for the server scope only! (Only work on this server or guild)
+		// const data = await rest.put(
+		// 	Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
+		// 	{ body: commands },
+		// );
 
-        // // This is for global deployment or commands
-        // const data = await rest.put(
-        //     Routes.applicationCommands(process.env.CLIENT_ID),
-        //     { body: commands },
-        // )
+        // This is for global deployment or commands
+        const data = await rest.put(
+            Routes.applicationCommands(process.env.CLIENT_ID),
+            { body: commands },
+        )
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {
