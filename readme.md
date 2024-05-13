@@ -98,3 +98,6 @@ NOTE: the bot isn't being hosted anywhere, for the bot to work, download the rep
     * Added Genshin.js file for data retrieval on genshin game info!
         * Used Axiom to do api retrieval!
         * It used a fanmade API to retrieve JSON data format and adjust the display to make it look more relevant on discord chat.
+
+    * Implementing autocomplete feature for some of the commands such as:
+        *
