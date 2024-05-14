@@ -2,57 +2,52 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
 const MAX_EMBED_DESCRIPTION_LENGTH = 4096; // Discord's limit for embed descriptions
 const EMBED_COLOR = '#0099ff';
-// https://discordjs.guide/slash-commands/permissions.html#member-permissions
-// Function to capitalize the first letter of each word and remove hyphens
+
+let characterCache = ['Amber', 'Albedo']; // Cache for storing character data
+
+// Function to fetch all characters from the API and refresh the cache
+async function refreshCharacterCache() {
+    try {
+        const response = await axios.get('https://genshin-api.com/api/characters');
+        characterCache = response.data.map(char => char.name);
+    } catch (error) {
+        console.error('Failed to fetch characters:', error.message);
+        // Adding sample data for testing purposes
+        characterCache = ['Amber', 'Barbara', 'Chongyun', 'Diluc', 'Eula', 'Fischl', 'Ganyu', 'Hu Tao', 'Jean', 'Keqing', 'Lisa', 'Mona', 'Ningguang', 'Qiqi', 'Razor', 'Sucrose', 'Tartaglia', 'Venti', 'Xiangling', 'Xiao', 'Xingqiu', 'Zhongli'];
+    }
+}
+
+// Utility function to capitalize the first letter of each word and remove hyphens
 function capitalizeFirstLetter(string) {
     if (!string) return "";
-    // Split by hyphen first to replace with spaces, then capitalize each word
-    return string
-        .split('-').join(' ')
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
+    return string.split('-').join(' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
 }
 
 // Function to create multiple embeds from a large content string
 function createEmbeds(title, content) {
-    let embeds = [];
-    let currentContent = "";
-
+    let embeds = [], currentContent = "";
     for (const section of content.split('\n\n')) {
         if (currentContent.length + section.length + 2 > MAX_EMBED_DESCRIPTION_LENGTH) {
-            embeds.push(new EmbedBuilder()
-                .setColor(EMBED_COLOR)
-                .setDescription(currentContent)
-            );
+            embeds.push(new EmbedBuilder().setColor(EMBED_COLOR).setDescription(currentContent));
             currentContent = "";
         }
         currentContent += `${section}\n\n`;
     }
-
     if (currentContent.length > 0) {
-        embeds.push(new EmbedBuilder()
-            .setColor(EMBED_COLOR)
-            .setDescription(currentContent)
-        );
+        embeds.push(new EmbedBuilder().setColor(EMBED_COLOR).setDescription(currentContent));
     }
-
     if (embeds.length === 0) {
-        embeds.push(new EmbedBuilder()
-            .setColor(EMBED_COLOR)
-            .setDescription("No information available.")
-        );
+        embeds.push(new EmbedBuilder().setColor(EMBED_COLOR).setDescription("No information available."));
     }
-
     embeds[0].setTitle(title);
     return embeds;
 }
 
-// For sending multiple embed, to get away with the 6000 words restriction on discord
+// For sending multiple embeds to get around the 6000 character limit on Discord
 async function sendEmbedsInChunks(interaction, embeds) {
-    await interaction.editReply({ embeds: [embeds.shift()] }); // Send the first embed as a reply
+    await interaction.editReply({ embeds: [embeds.shift()] });
     for (const embed of embeds) {
-        await interaction.followUp({ embeds: [embed] }); // Send remaining embeds as follow-up messages
+        await interaction.followUp({ embeds: [embed] });
     }
 }
 
@@ -60,6 +55,14 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('testgenshin')
         .setDescription('Fetch Genshin Impact game info using a fanmade API')
+        .addSubcommand(subcommand =>
+            subcommand.setName('characters')
+            .setDescription('Get information about characters')
+            .addStringOption(option => 
+                option.setName('name')
+                .setDescription('Enter the name of the character')
+                .setAutocomplete(true))
+        )
         .addSubcommand(subcommand =>
             subcommand.setName('artifacts')
                 .setDescription('Get information about artifacts'))
@@ -69,14 +72,6 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand.setName('domains')
                 .setDescription('Get information about domains'))
-        .addSubcommand(subcommand =>
-            subcommand.setName('characters')
-                .setDescription('Get information about characters'))
-                // The part to test the auto complete feature
-                .addStringOption(option => 
-                    option.setName('name')
-                    .setDescription('Enter the name of the character')
-                    .setAutocomplete(true))
         .addSubcommandGroup(group =>
             group.setName('consumables')
                 .setDescription('Get information about consumables')
@@ -86,7 +81,7 @@ module.exports = {
                 .addSubcommand(subcommand =>
                     subcommand.setName('potions')
                         .setDescription('Get info about Potions type consumables'))
-                )
+        )
         .addSubcommand(subcommand =>
             subcommand.setName('elements')
                 .setDescription('Get information about elements'))
@@ -96,7 +91,6 @@ module.exports = {
                 .addSubcommand(subcommand =>
                     subcommand.setName('boss-material')
                         .setDescription('Get info for materials from bosses'))
-                        // If need another level, do .addStringOption
                 .addSubcommand(subcommand =>
                     subcommand.setName('character-ascension')
                         .setDescription('Get info for character ascension'))
@@ -129,32 +123,26 @@ module.exports = {
             subcommand.setName('weapons')
                 .setDescription('Get information about weapons')),
     async execute(interaction) {
-        const group = interaction.options.getSubcommandGroup(false); // FOr material category, will be null if not material
+        const group = interaction.options.getSubcommandGroup(false); // For material category, will be null if not material
         const subcommand = interaction.options.getSubcommand();
         let apiUrl = `https://genshin.jmp.blue/`;
 
         if (group) {
-            // group is the material
-            // subcommand is the small subcommand in material
-            apiUrl += `${group}/${subcommand}`; // Add the choices to url
+            apiUrl += `${group}/${subcommand}`; // Add the choices to URL
         } else {
             apiUrl += `${subcommand}`; // Normal append
         }
-        
-        // Ask discord to wait for longer than default 3 secs
+
         await interaction.deferReply();
 
         try {
             const response = await axios.get(apiUrl);
-            //console.log(response.data);
             let content = "";
             const items = response.data;
-            
+
             if (group === 'materials') {
                 switch (subcommand) {
-                    // Have name, source and array of cahracter
                     case 'boss-material':
-                        // Item
                         for (const key in items) {
                             const item = items[key];
                             const formattedCharacters = item.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
@@ -162,11 +150,9 @@ module.exports = {
                         }
                         break;
                     case 'character-ascension':
-                        // Process each element type (e.g., Anemo, Cryo, etc.)
                         for (const elementType in items) {
                             const elementInfo = items[elementType];
                             content += `**${capitalizeFirstLetter(elementType)} Ascension Materials:**\n`;
-                            // Process each ascension material stage (e.g., sliver, fragment, chunk, gemstone)
                             for (const stage in elementInfo) {
                                 const material = elementInfo[stage];
                                 content += `• **${material.name}**\nRarity: ${'★'.repeat(material.rarity)}\nSources: ${material.sources.join(", ")}\n\n`;
@@ -176,39 +162,33 @@ module.exports = {
                         break;
                     case 'character-experience':
                         for (const item of items.items) {
-                            // Ensure that all properties exist and are correctly referenced
                             if (item && item.name && typeof item.experience === 'number' && typeof item.rarity === 'number') {
                                 content += `**${item.name}**\nExperience: ${item.experience} XP\nRarity: ${'★'.repeat(item.rarity)} (${item.rarity})\n\n`;
                             }
                         }
                         break;
                     case 'common-ascension':
-                        // the key is the material type (like slime, hilichurl-masks..., etc.)
                         for (const materialType in items) {
                             const materialInfo = items[materialType];
                             content += `**${capitalizeFirstLetter(materialType.replace(/-/g, ' '))}**\n`;                
-                            // Check and list characters
                             if (materialInfo.characters && Array.isArray(materialInfo.characters)) {
                                 const formattedCharacters = materialInfo.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
                                 content += `Characters: ${formattedCharacters}\n`;
                             } else {
                                 content += `Characters: None\n`;
                             }
-                            // Check and list weapons
                             if (materialInfo.weapons && Array.isArray(materialInfo.weapons)) {
                                 const formattedWeapons = materialInfo.weapons.map(weapon => capitalizeFirstLetter(weapon.replace(/-/g, ' '))).join(", ");
                                 content += `Weapons: ${formattedWeapons}\n`;
                             } else {
                                 content += `Weapons: None\n`;
                             }
-                            // Items and rarity
                             content += "Items:\n";
                             if (materialInfo.items && Array.isArray(materialInfo.items)) {
                                 materialInfo.items.forEach(item => {
                                     content += `• **${item.name}**: Rarity ${'★'.repeat(item.rarity)}\n`;
                                 });
                             }
-                            // Sources
                             if (materialInfo.sources && Array.isArray(materialInfo.sources)) {
                                 const sourcesList = materialInfo.sources.join(", ");
                                 content += `Sources: ${sourcesList}\n\n`;
@@ -218,16 +198,13 @@ module.exports = {
                         }                 
                         break;
                     case 'cooking-ingredients':
-                        // Item
                         for (const ingredientKey in items) {
                             const ingredient = items[ingredientKey];
                             content += `**${capitalizeFirstLetter(ingredient.name)}**\n`;
                             content += `Description: ${ingredient.description}\n`;      
-                            // Check for rarity, if it exists
                             if (ingredient.rarity) {
                                 content += `Rarity: ${'★'.repeat(ingredient.rarity)} (${ingredient.rarity})\n`;
                             }
-                            // Check and list sources
                             if (ingredient.sources && Array.isArray(ingredient.sources)) {
                                 const sourcesList = ingredient.sources.join(", ");
                                 content += `Sources: ${sourcesList}\n\n`;
@@ -237,42 +214,33 @@ module.exports = {
                         }
                         break;
                     case 'local-specialties':
-                        // the key is regions
-                        // value is array of dictionary
-                            // dictionary: name
-                            // characters
                         for (const region in items) {
                             if (items.hasOwnProperty(region)) {
-                                content += `**${capitalizeFirstLetter(region)} Specialties:**\n`; // Capitalize the region name
+                                content += `**${capitalizeFirstLetter(region)} Specialties:**\n`;
                                 for (const specialty of items[region]) {
                                     const formattedCharacters = specialty.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
                                     content += `• **${specialty.name}**: Used by ${formattedCharacters}\n`;
                                 }
-                                content += '\n'; // Add a newline for spacing between regions
+                                content += '\n';
                             }
                         }                    
                         break;
                     case 'talent-book':
-                        // the key is name of book
                         for (const bookType in items) {
-                            const bookInfo = items[bookType]; // Access the specific book type info
-                            content += `**${capitalizeFirstLetter(bookType)}**\n`; // Capitalize first letter of the book type
+                            const bookInfo = items[bookType];
+                            content += `**${capitalizeFirstLetter(bookType)}**\n`;
                             content += `Source: ${capitalizeFirstLetter(bookInfo.source)}\n`;
-                            content += `Availability: ${bookInfo.availability.join(", ")}\n`; // Join the array of days into a string
-                            // using regex to replace all hypen (/-/) globally (g) with space
+                            content += `Availability: ${bookInfo.availability.join(", ")}\n`;
                             const formattedCharacters = bookInfo.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
-                            content += `Characters: ${formattedCharacters}\n`; // Join the array of characters into a string
+                            content += `Characters: ${formattedCharacters}\n`;
                             content += "Items:\n";
-                            for (const item of bookInfo.items) { // Iterate over items related to the book type
+                            for (const item of bookInfo.items) {
                                 content += `• **${item.name}**: Rarity ${'★'.repeat(item.rarity)} (${item.rarity})\n`;
                             }
-                            content += "\n"; // Add a newline for spacing between book types
+                            content += "\n";
                         }
                         break;
                     case 'talent-boss':
-                        // Item
-                        // key is boss name that points to more dictionaries
-                            // containing id, name, characters
                         for (const boss in items) {
                             const bossInfo = items[boss];
                             const formattedCharacters = bossInfo.characters.map(char => capitalizeFirstLetter(char.replace(/-/g, ' '))).join(", ");
@@ -280,9 +248,6 @@ module.exports = {
                         }
                         break;
                     case 'weapon-ascension':
-                        // Item
-                        // The key is hte name of each weapon ascension item
-                            // containing sources, weapon, availability, array of items
                         for (const category in items) {
                             const categoryInfo = items[category];
                             content += `**${capitalizeFirstLetter(category)}**\n`;
@@ -297,12 +262,10 @@ module.exports = {
                         }
                         break;
                     case 'weapon-experience':
-                        // Item
                         for (const item of items.items) {
                             content += `**${capitalizeFirstLetter(item.name)}**\n`;
                             content += `Experience: ${item.experience} XP\n`;
                             content += `Rarity: ${'★'.repeat(item.rarity)} (${item.rarity})\n`;
-                            
                             if (item.source && Array.isArray(item.source)) {
                                 const sourcesList = item.source.join(", ");
                                 content += `Source: ${sourcesList}\n\n`;
@@ -321,8 +284,6 @@ module.exports = {
                         for (const foodKey in items) {
                             const food = items[foodKey];
                             content += `**${food.name}**\nType: ${food.type}\nEffect: ${food.effect}\nRarity: ${'★'.repeat(food.rarity)} (${food.rarity})\nDescription: ${food.description}\n`;
-                    
-                            // Check if the food has a recipe
                             if (food.hasRecipe) {
                                 content += "Recipe:\n";
                                 food.recipe.forEach(ingredient => {
@@ -336,19 +297,16 @@ module.exports = {
                             } else {
                                 content += `Proficiency: Unknown\n\n`;
                             }
-                            
                         }
                         break;
                     case 'potions':
                         for (const potionKey in items) {
                             const potion = items[potionKey];
                             content += `**${capitalizeFirstLetter(potion.name)}**\nEffect: ${potion.effect}\nRarity: ${'★'.repeat(potion.rarity)} (${potion.rarity})\n`;
-                            // Crafting details
                             content += "Crafting:\n";
                             potion.crafting.forEach(ingredient => {
                                 content += `• **${ingredient.item}**: ${ingredient.quantity}\n`;
                             });
-                    
                             content += `Cost: ${potion.crafting.find(item => item.item === "Mora").quantity} Mora\n\n`;
                         }
                         break;
@@ -381,17 +339,11 @@ module.exports = {
                         break;
                 }
             }
-            // This one have 4096 word restriction for discord
-            // const embed = new EmbedBuilder()
-            //     .setColor('#0099ff')
-            //     .setTitle(`List of ${capitalizeFirstLetter(subcommand)}`)
-            //     .setDescription(content);
+
             const embeds = createEmbeds(`List of ${capitalizeFirstLetter(subcommand)}`, content);
-            // If embed count is > 1 --> word is > 4096 --> Send in split response directly
             if (embeds.length > 1) {
                 await sendEmbedsInChunks(interaction, embeds);
-            }
-            else {
+            } else {
                 await interaction.editReply({ embeds });
             }
         } catch (error) {
@@ -399,4 +351,18 @@ module.exports = {
             await interaction.editReply('Failed to fetch data from the API.');
         }
     },
+    async autocomplete(interaction) {
+        if (interaction.commandName === 'testgenshin' && interaction.options.getSubcommand() === 'characters') {
+            const focusedOption = interaction.options.getFocused(true);
+            if (focusedOption.name === 'name') {
+                const filteredCharacters = characterCache.filter(char => char.toLowerCase().includes(focusedOption.value.toLowerCase()));
+                await interaction.respond(
+                    filteredCharacters.slice(0, 25).map(name => ({ name, value: name }))
+                );
+            }
+        }
+    }
 };
+
+// Refresh the character cache when the bot starts
+refreshCharacterCache().then(() => console.log('Character cache loaded')).catch(err => console.error('Failed to load character cache:', err));
