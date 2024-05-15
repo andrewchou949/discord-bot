@@ -3,17 +3,17 @@ const axios = require('axios');
 const MAX_EMBED_DESCRIPTION_LENGTH = 4096; // Discord's limit for embed descriptions
 const EMBED_COLOR = '#0099ff';
 
-let characterCache = ['Amber', 'Albedo']; // Cache for storing character data
+let characterCache = []; // Cache for storing character data
 
 // Function to fetch all characters from the API and refresh the cache
 async function refreshCharacterCache() {
     try {
-        const response = await axios.get('https://genshin-api.com/api/characters');
-        characterCache = response.data.map(char => char.name);
+        const response = await axios.get('https://genshin.jmp.blue/characters');
+        characterCache = response.data.map(char => char);
     } catch (error) {
         console.error('Failed to fetch characters:', error.message);
         // Adding sample data for testing purposes
-        characterCache = ['Amber', 'Barbara', 'Chongyun', 'Diluc', 'Eula', 'Fischl', 'Ganyu', 'Hu Tao', 'Jean', 'Keqing', 'Lisa', 'Mona', 'Ningguang', 'Qiqi', 'Razor', 'Sucrose', 'Tartaglia', 'Venti', 'Xiangling', 'Xiao', 'Xingqiu', 'Zhongli'];
+        characterCache = [];
     }
 }
 
@@ -354,8 +354,17 @@ module.exports = {
     async autocomplete(interaction) {
         if (interaction.commandName === 'testgenshin' && interaction.options.getSubcommand() === 'characters') {
             const focusedOption = interaction.options.getFocused(true);
+            console.log('Focused option:', focusedOption);
             if (focusedOption.name === 'name') {
-                const filteredCharacters = characterCache.filter(char => char.toLowerCase().includes(focusedOption.value.toLowerCase()));
+                console.log('Character cache:', characterCache);
+                const filteredCharacters = characterCache.filter(char => {
+                    if (typeof char !== 'string') {
+                        console.error('Invalid character in cache:', char);
+                        return false;
+                    }
+                    return char.toLowerCase().includes(focusedOption.value.toLowerCase());
+                });
+                console.log('Filtered characters:', filteredCharacters);
                 await interaction.respond(
                     filteredCharacters.slice(0, 25).map(name => ({ name, value: name }))
                 );
