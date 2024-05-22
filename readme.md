@@ -4,9 +4,12 @@
 
 **Bot invite Link: https://discord.com/oauth2/authorize?client_id=1230287001513885712&permissions=8&scope=bot+applications.commands**
 
+Just simply copy this link and put in browser to invite the bot into your channels
+
 NOTE: the bot isn't being hosted anywhere, for the bot to work, download the repository and perform "node index.js" to make the bot active!
 
 **Below list all the steps being followed to create the entire project!**
+This step can just be used to create your own bot if needed!
 
 ### The project folder is created with "npm init -y" (for prefilled command for initialization)
 
