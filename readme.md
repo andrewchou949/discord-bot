@@ -101,6 +101,3 @@ This step can just be used to create your own bot if needed!
     * Added Genshin.js file for data retrieval on genshin game info!
         * Used Axiom to do api retrieval!
         * It used a fanmade API to retrieve JSON data format and adjust the display to make it look more relevant on discord chat.
-
-    * Implementing autocomplete feature for some of the commands such as:
-        *

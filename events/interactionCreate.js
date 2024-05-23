@@ -48,7 +48,6 @@ module.exports = {
                 }
             }
         } else if (interaction.isAutocomplete()) {
-            console.log('Autocomplete interaction detected');
             const command = interaction.client.commands.get(interaction.commandName);
             if (command && command.autocomplete) {
                 try {
