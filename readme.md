@@ -8,7 +8,6 @@ This Discord bot is designed to provide various functionalities to enhance the u
 - [Usage](#usage)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 - Command Handling
@@ -66,6 +65,7 @@ discord-bot
 ├── package.json                  # Node.js package configuration
 ├── readme.md                     # Project readme
 ├── requirements.txt              # Requirements for deployment
+```
 
 ### Components
 - **commands/**: Contains individual command modules.
