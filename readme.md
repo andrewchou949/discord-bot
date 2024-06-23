@@ -1,103 +1,81 @@
-# Discord Bots Creation
+# Discord Bot
 
-## This project is to create a simple discord bot with javascript
+This Discord bot is designed to provide various functionalities to enhance the user experience on Discord servers. It features command handling, event management, and easy deployment.
 
-**Bot invite Link: https://discord.com/oauth2/authorize?client_id=1230287001513885712&permissions=8&scope=bot+applications.commands**
+## Table of Contents
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [License](#license)
 
-Just simply copy this link and put in browser to invite the bot into your channels
+## Features
+- Command Handling
+- Event Management
+- Easy Deployment
 
-NOTE: the bot isn't being hosted anywhere, for the bot to work, download the repository and perform "node index.js" to make the bot active!
+## Installation
 
-**Below list all the steps being followed to create the entire project!**
-This step can just be used to create your own bot if needed!
+### Prerequisites
+- Node.js
+- npm (Node Package Manager)
+- Discord account and server
+- Discord Bot Token
 
-### The project folder is created with "npm init -y" (for prefilled command for initialization)
+### Steps
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/andrewchou949/discord-bot.git
+    cd discord-bot
+    ```
+2. Install the dependencies:
+    ```bash
+    npm install
+    ```
+3. Set up your environment variables:
+   - Create a `.env` file in the root directory and add your Discord Bot Token:
+     ```env
+     DISCORD_TOKEN=your_discord_bot_token
+     ```
 
-### The bot is primarily using discord.js to create
-    * To install discord.js:
-        * npm install discord.js
+## Usage
+1. Deploy the commands to your Discord server:
+    ```bash
+    node deploy-commands.js
+    ```
+2. Run the bot:
+    ```bash
+    node index.js
+    ```
 
-### To keep codes tidy and clean, ESLint is being used!
-    * To install eslint:
-        * npm install --save-dev eslint
-    * All the rules are being added to .eslintrc.json file!
+## Project Structure
+```plaintext
+discord-bot
+├── .DS_Store
+├── .eslintrc.json                # ESLint configuration file
+├── .gitignore                    # Git ignore file
+├── commands                      # Directory for command modules
+│   └── ...                       # Command files
+├── deploy-commands.js            # Script to deploy commands to Discord
+├── events                        # Directory for event modules
+│   └── ...                       # Event files
+├── index.js                      # Main bot file
+├── node_modules                  # Node.js modules
+├── package-lock.json             # Package lock file
+├── package.json                  # Node.js package configuration
+├── readme.md                     # Project readme
+├── requirements.txt              # Requirements for deployment
 
-### Setting up bot application
-    * Start by create a discord application on discord dev portal!
-    * Then create a token of the bot (save this token for later use)
-    * Generating Invite URL of the bot:
-        * Got to OAuth2 (Sidebar)
-            * Under OAuth2 URL Generator, pick "bot" and "applications.commands" (then the setting would pop up, pick base on needs)
-        * Copy the URL link and put it in browser to connect to discord account
-            * Then pick the server to add the bot to
-                * Once authorized, the bot should be in the server directly
+### Components
+- **commands/**: Contains individual command modules.
+- **events/**: Includes event handling modules.
+- **index.js**: The entry point for the bot.
 
-### From this part is about creating the bot and configuring the bots
-    * For the token, make sure to put them in .env files instead and .env should be added to .gitignore to prevent pushing to public
-    * Creating the main code file (index.js)
-    * Once index.js is created, perform "node index.js" in terminal
-        * This should say "Ready! Logged in as {Bot name}" in terminal
-
-### Creating Slash Commands
-    **Slash Command is a way for user to interact with bot directly in client application by typing in "\[Command]"**
-    * To make slash commands work, 3 pieces of codes are needed!
-        1. Individual Command Files: to define each commaind definition and functionalities
-        2. Command Handler: read the files and execute commands
-        3. Command Deployment Scrip: register slash commands with discord so they appear in the interface
-    * Making the "individual command files":
-        * For this part, a "SlashCommandBuilder" is used to construct the command definitions
-            * Each command would at minimum has:
-                * Name: .setName('Name')
-                * Description: .setDescription('String defining description')
-            * Each command would need a function to run too (when command is used) --> to respond to the interaction!
-                * Define a execute(interaction) function and respond by:
-                    * await interaction.reply("Anything you want to reply :D")
-            * Both bullet points above should be in the same .js files!
-        **Individual command files are stored in './commands/utility' folder**
-    * Making the "Command Handling":
-        * This command handling part is for creating a single command file with a giant if/else if chain to handle each command!!
-        * In index.js, define:
-            * fs module: to be used as a scanner to read command directory
-            * path module: to find the path to access files!
-            * .commands object: to be used as a way to refer to commands in other files
-        * Construct a dynamically retrieval of command files in index.js (check in index.js file)
-        * Add a event listener in index.js (receiving command interactions)
-    * Making the "Command Deployment Script" (Registering the commands):
-        * Typically command registration consists of two ways:
-            1. In one specific guild (server)
-            2. In every guild (server) the bot is in!
-        * Doing one guild command registration first (just to test out!):
-            * Create a deploy-command.js 
-            * Perform "node deploy-command.js" in terminal
-    *** NOTE: once there's changes on index.js, do CMD + Z to exit first, then "node index.js" again to take effect!
-    *** NOTE: for slash command that need to get info from external API, "axios" package can be used, and just do axios.get('API website')
-
-    * Event Handling for the bots:
-        * At this point, there are:
-            1. ClientReady Event: when client is ready to use --> emit once
-            2. InteractionCreate Event: when interaction is received --> emit once
-        * Move both event to a file in "Event" folder
-            * ready.js
-            * interactionCreate.js respectively
-        * Then in index.js add a way to find the path to events folder and listen to the event files!
-
-    * Adding a cooldown time for each slash commands: 
-        * Simply add the cooldown factor to the slash command files!
-        * Create a cooldown object to the interactionCreate too!
-
-    * The reload.js is for reloading any slash command when changes occurred without having to stop the bot and run again
-
-    ** NOTE: to add more option for reply of slash command, make changes on each slash command file:
-        * Edit response: send respond once and edit after the wait time
-        * Deferred response: wait for a set time and respond.
-        * Follow-ups response: send one response and then another one (not shown as edited!) --> two difference response at one command!
-        * Fetching or deleting response
-    All of these are in hello.js for demonstration
-
-    * Doing command option for slash command (in ban.js)
-        * Giving some optional and required option for user!
-    * Command Choices (in random.js)
-
-    * Added Genshin.js file for data retrieval on genshin game info!
-        * Used Axiom to do api retrieval!
-        * It used a fanmade API to retrieve JSON data format and adjust the display to make it look more relevant on discord chat.
+## Contributing
+Contributions are welcome! Please follow these steps:
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Commit your changes (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature/YourFeature`).
+5. Open a pull request.
